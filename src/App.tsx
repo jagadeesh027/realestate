@@ -95,14 +95,14 @@ export default function App() {
     <div className="min-h-screen bg-paper selection:bg-accent/30">
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/80 backdrop-blur-lg shadow-sm py-4' : 'bg-transparent py-8'
+        isScrolled ? 'bg-dark/80 backdrop-blur-lg shadow-sm py-4' : 'bg-transparent py-8'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-dark rounded-xl flex items-center justify-center">
               <Building2 className="text-accent w-6 h-6" />
             </div>
-            <span className="text-2xl font-serif font-bold tracking-tight text-dark">
+            <span className="text-2xl font-serif font-bold tracking-tight text-white">
               Omni Build <span className="text-accent">Solutions</span>
             </span>
           </div>
@@ -121,7 +121,7 @@ export default function App() {
                   e.preventDefault();
                   document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="text-sm font-semibold tracking-widest uppercase text-dark/60 hover:text-accent transition-colors"
+                className="text-sm font-semibold tracking-widest uppercase text-white/60 hover:text-accent transition-colors"
               >
                 {item.name}
               </a>
@@ -132,7 +132,7 @@ export default function App() {
             {user ? (
               <div className="flex items-center gap-4">
                 <div className="hidden lg:flex flex-col items-end">
-                  <span className="text-xs font-bold text-dark">{user.name}</span>
+                  <span className="text-xs font-bold text-white">{user.name}</span>
                   <span className="text-[10px] font-bold text-accent uppercase tracking-tighter">{user.role}</span>
                 </div>
                 {user.role === 'admin' && (
@@ -149,7 +149,7 @@ export default function App() {
                     localStorage.removeItem('token');
                     setUser(null);
                   }}
-                  className="p-2 bg-dark/5 text-dark/40 rounded-full hover:bg-red-50 hover:text-red-500 transition-all"
+                  className="p-2 bg-white/5 text-white/40 rounded-full hover:bg-red-500/10 hover:text-red-500 transition-all"
                   title="Logout"
                 >
                   <LogOut className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function App() {
             ) : (
               <button 
                 onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-widest uppercase text-dark/60 hover:text-dark transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-widest uppercase text-white/60 hover:text-white transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Login</span>
@@ -167,7 +167,7 @@ export default function App() {
 
             <button 
               onClick={() => setIsListModalOpen(true)}
-              className="px-6 py-2.5 bg-dark text-white text-xs font-bold tracking-widest uppercase rounded-full hover:bg-accent transition-all shadow-lg shadow-dark/10"
+              className="px-6 py-2.5 bg-accent text-white text-xs font-bold tracking-widest uppercase rounded-full hover:bg-white hover:text-dark transition-all shadow-lg shadow-accent/20"
             >
               List Property
             </button>
@@ -178,11 +178,19 @@ export default function App() {
       {/* Hero Section */}
       <section id="hero" className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <motion.img 
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000" 
             alt="Luxury Home"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.15 }}
+            transition={{ 
+              duration: 15, 
+              repeat: Infinity, 
+              repeatType: "reverse", 
+              ease: "easeInOut" 
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/20 to-paper" />
         </div>
