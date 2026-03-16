@@ -1,5 +1,5 @@
 {
-  "name": "LuxeEstate",
-  "description": "A premium real estate platform featuring AI-powered property search, market insights, and immersive property discovery.",
+  "name": "Omni Build Solutions",
+  "description": "A premium real estate platform by Omni Build Solutions featuring AI-powered property search, market insights, and immersive property discovery.",
   "requestFramePermissions": ["geolocation"]
 }

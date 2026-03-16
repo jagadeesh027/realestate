@@ -45,10 +45,10 @@ export function PropertyCard({ property, onClick }: PropertyCardProps) {
       
       <div className="p-6">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-serif font-bold group-hover:text-gold transition-colors">
+          <h3 className="text-xl font-serif font-bold group-hover:text-accent transition-colors">
             {property.title}
           </h3>
-          <p className="text-lg font-bold text-gold">{formattedPrice}</p>
+          <p className="text-lg font-bold text-accent">{formattedPrice}</p>
         </div>
         
         <div className="flex items-center text-gray-500 text-sm mb-4">

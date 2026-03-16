@@ -8,7 +8,7 @@ import { getChatResponse } from '../services/gemini';
 export function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Welcome to LuxeEstate. How can I assist you with your luxury property search today?' }
+    { role: 'model', text: 'Welcome to Omni Build Solutions. How can I assist you with your luxury property search today?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,12 +51,12 @@ export function AIChat() {
             {/* Header */}
             <div className="bg-dark p-6 flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
                   <Bot className="text-white w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-white font-serif font-bold">LuxeEstate AI</h3>
-                  <p className="text-gold text-xs font-medium uppercase tracking-wider">Concierge</p>
+                  <h3 className="text-white font-serif font-bold">Omni Build Solutions AI</h3>
+                  <p className="text-accent text-xs font-medium uppercase tracking-wider">Concierge</p>
                 </div>
               </div>
               <button 
@@ -79,7 +79,7 @@ export function AIChat() {
                 >
                   <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                     <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${
-                      msg.role === 'user' ? 'bg-dark' : 'bg-gold'
+                      msg.role === 'user' ? 'bg-dark' : 'bg-accent'
                     }`}>
                       {msg.role === 'user' ? <User className="text-white w-4 h-4" /> : <Bot className="text-white w-4 h-4" />}
                     </div>
@@ -100,11 +100,11 @@ export function AIChat() {
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gold flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
                       <Bot className="text-white w-4 h-4" />
                     </div>
                     <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-black/5">
-                      <Loader2 className="w-5 h-5 animate-spin text-gold" />
+                      <Loader2 className="w-5 h-5 animate-spin text-accent" />
                     </div>
                   </div>
                 </div>
@@ -120,12 +120,12 @@ export function AIChat() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask about properties, areas, or market trends..."
-                  className="w-full pl-4 pr-12 py-3 bg-paper border border-black/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold transition-all"
+                  className="w-full pl-4 pr-12 py-3 bg-paper border border-black/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
                 />
                 <button
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-dark text-white rounded-lg hover:bg-gold transition-colors disabled:opacity-50"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-dark text-white rounded-lg hover:bg-accent transition-colors disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                 </button>
@@ -139,7 +139,7 @@ export function AIChat() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-16 h-16 bg-dark text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-gold transition-colors"
+        className="w-16 h-16 bg-dark text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-accent transition-colors"
       >
         {isOpen ? <X className="w-8 h-8" /> : <MessageSquare className="w-8 h-8" />}
       </motion.button>

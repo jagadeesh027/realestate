@@ -31,7 +31,7 @@ export async function getChatResponse(messages: ChatMessage[], userLocation?: { 
         { role: 'user', parts: [{ text: lastMessage }] }
       ],
       config: {
-        systemInstruction: `You are LuxeEstate AI, a premium real estate assistant. You help users find luxury properties, provide market insights, and answer questions about locations. 
+        systemInstruction: `You are Omni Build Solutions AI, a premium real estate assistant. You help users find luxury properties, provide market insights, and answer questions about locations. 
 
 Current Property Catalog:
 ${propertiesContext}
