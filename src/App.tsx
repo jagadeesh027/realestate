@@ -1,12 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, MapPin, ChevronDown, Building2, Home, LayoutGrid, Sparkles, X } from 'lucide-react';
+import { Search, Filter, MapPin, ChevronDown, Building2, Home, LayoutGrid, Sparkles, X, LogIn, LogOut, Shield } from 'lucide-react';
 import { PROPERTIES } from './data';
 import { Property } from './types';
 import { PropertyCard } from './components/PropertyCard';
 import { PropertyDetails } from './components/PropertyDetails';
 import { AIChat } from './components/AIChat';
 import { ListPropertyModal } from './components/ListPropertyModal';
+import AuthModal from './components/AuthModal';
+import AdminModal from './components/AdminModal';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,7 +16,42 @@ export default function App() {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>('All');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [dbProperties, setDbProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // In a real app, you'd verify the token with the server
+      // For now, we'll just decode it or assume it's valid if it exists
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setUser({ id: payload.id, email: payload.email, role: payload.role, name: payload.name || 'User' });
+      } catch (e) {
+        localStorage.removeItem('token');
+      }
+    }
+
+    const fetchProperties = async () => {
+      try {
+        const res = await fetch('/api/properties');
+        if (res.ok) {
+          const data = await res.json();
+          setDbProperties(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch properties:', err);
+      }
+    };
+    fetchProperties();
+  }, []);
+
+  const allProperties = useMemo(() => {
+    return [...PROPERTIES, ...dbProperties];
+  }, [dbProperties]);
 
   // Handle scroll for navbar styling
   useMemo(() => {
@@ -26,19 +63,19 @@ export default function App() {
   }, []);
 
   const filteredProperties = useMemo(() => {
-    return PROPERTIES.filter(p => {
+    return allProperties.filter(p => {
       const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.location.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType === 'All' || p.type === selectedType;
       const matchesNeighborhood = selectedNeighborhood === 'All' || p.location.includes(selectedNeighborhood);
       return matchesSearch && matchesType && matchesNeighborhood;
     });
-  }, [searchQuery, selectedType, selectedNeighborhood]);
+  }, [searchQuery, selectedType, selectedNeighborhood, allProperties]);
 
   const propertyTypes = ['All', 'Villa', 'Apartment', 'Penthouse', 'Mansion'];
 
   const neighborhoods = useMemo(() => {
-    const counts = PROPERTIES.reduce((acc, p) => {
+    const counts = allProperties.reduce((acc, p) => {
       const city = p.location.split(',')[0];
       acc[city] = (acc[city] || 0) + 1;
       return acc;
@@ -91,12 +128,50 @@ export default function App() {
             ))}
           </div>
 
-          <button 
-            onClick={() => setIsListModalOpen(true)}
-            className="px-6 py-2.5 bg-dark text-white text-xs font-bold tracking-widest uppercase rounded-full hover:bg-accent transition-all shadow-lg shadow-dark/10"
-          >
-            List Property
-          </button>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <div className="hidden lg:flex flex-col items-end">
+                  <span className="text-xs font-bold text-dark">{user.name}</span>
+                  <span className="text-[10px] font-bold text-accent uppercase tracking-tighter">{user.role}</span>
+                </div>
+                {user.role === 'admin' && (
+                  <button 
+                    onClick={() => setIsAdminModalOpen(true)}
+                    title="Admin Dashboard"
+                    className="p-2 bg-accent/10 text-accent rounded-full hover:bg-accent hover:text-white transition-all"
+                  >
+                    <Shield className="w-4 h-4" />
+                  </button>
+                )}
+                <button 
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    setUser(null);
+                  }}
+                  className="p-2 bg-dark/5 text-dark/40 rounded-full hover:bg-red-50 hover:text-red-500 transition-all"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 text-xs font-bold tracking-widest uppercase text-dark/60 hover:text-dark transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Login</span>
+              </button>
+            )}
+
+            <button 
+              onClick={() => setIsListModalOpen(true)}
+              className="px-6 py-2.5 bg-dark text-white text-xs font-bold tracking-widest uppercase rounded-full hover:bg-accent transition-all shadow-lg shadow-dark/10"
+            >
+              List Property
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -106,7 +181,7 @@ export default function App() {
           <img 
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000" 
             alt="Luxury Home"
-            className="w-full h-full object-cover scale-105 animate-slow-zoom"
+            className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/20 to-paper" />
@@ -405,17 +480,26 @@ export default function App() {
       <ListPropertyModal 
         isOpen={isListModalOpen} 
         onClose={() => setIsListModalOpen(false)} 
+        onSuccess={async () => {
+          const res = await fetch('/api/properties');
+          if (res.ok) {
+            const data = await res.json();
+            setDbProperties(data);
+          }
+        }}
       />
-      <AIChat />
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(u) => setUser(u)}
+      />
+      <AdminModal 
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+      />
+      <AIChat properties={dbProperties} />
 
       <style>{`
-        @keyframes slow-zoom {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.1); }
-        }
-        .animate-slow-zoom {
-          animation: slow-zoom 20s ease-in-out infinite alternate;
-        }
       `}</style>
     </div>
   );

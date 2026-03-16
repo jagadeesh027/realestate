@@ -5,7 +5,11 @@ import Markdown from 'react-markdown';
 import { ChatMessage } from '../types';
 import { getChatResponse } from '../services/gemini';
 
-export function AIChat() {
+interface AIChatProps {
+  properties?: any[];
+}
+
+export function AIChat({ properties = [] }: AIChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'model', text: 'Welcome to Omni Build Solutions. How can I assist you with your luxury property search today?' }
@@ -29,7 +33,7 @@ export function AIChat() {
     setIsLoading(true);
 
     try {
-      const responseText = await getChatResponse([...messages, userMessage]);
+      const responseText = await getChatResponse([...messages, userMessage], properties);
       setMessages(prev => [...prev, { role: 'model', text: responseText }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'model', text: "I'm sorry, I encountered an error. Please try again." }]);

@@ -5,7 +5,7 @@ import { PROPERTIES } from "../data";
 const apiKey = process.env.GEMINI_API_KEY;
 const ai = new GoogleGenAI({ apiKey: apiKey || "" });
 
-export async function getChatResponse(messages: ChatMessage[], userLocation?: { lat: number; lng: number }) {
+export async function getChatResponse(messages: ChatMessage[], additionalProperties: any[] = [], userLocation?: { lat: number; lng: number }) {
   if (!apiKey) {
     return "API Key not configured. Please add GEMINI_API_KEY to your environment.";
   }
@@ -13,8 +13,9 @@ export async function getChatResponse(messages: ChatMessage[], userLocation?: { 
   try {
     const model = "gemini-2.5-flash"; 
     
-    const propertiesContext = PROPERTIES.map(p => 
-      `- ${p.title} in ${p.location}: $${p.price.toLocaleString()}, ${p.beds} beds, ${p.baths} baths, ${p.sqft} sqft. ${p.description}`
+    const allProperties = [...PROPERTIES, ...additionalProperties];
+    const propertiesContext = allProperties.map(p => 
+      `- ${p.title} in ${p.location}: ${p.price}, ${p.beds} beds, ${p.baths} baths, ${p.sqft} sqft. ${p.description || ''}`
     ).join('\n');
 
     const history = messages.slice(0, -1).map(m => ({

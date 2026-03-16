@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Bed, Bath, Maximize, MapPin, Check, Phone, Mail } from 'lucide-react';
+import { X, Bed, Bath, Maximize, MapPin, Check, Phone, Mail, Loader2 } from 'lucide-react';
 import { Property } from '../types';
 
 interface PropertyDetailsProps {
@@ -8,6 +9,9 @@ interface PropertyDetailsProps {
 }
 
 export function PropertyDetails({ property, onClose }: PropertyDetailsProps) {
+  const [isInquiring, setIsInquiring] = useState(false);
+  const [isInquirySent, setIsInquirySent] = useState(false);
+
   if (!property) return null;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
@@ -15,6 +19,16 @@ export function PropertyDetails({ property, onClose }: PropertyDetailsProps) {
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(property.price);
+
+  const handleInquiry = () => {
+    setIsInquiring(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsInquiring(false);
+      setIsInquirySent(true);
+      setTimeout(() => setIsInquirySent(false), 3000);
+    }, 1500);
+  };
 
   return (
     <AnimatePresence>
@@ -107,13 +121,30 @@ export function PropertyDetails({ property, onClose }: PropertyDetailsProps) {
               </div>
 
               <div className="flex gap-4">
-                <button className="flex-1 bg-dark text-white py-4 rounded-xl font-bold hover:bg-accent transition-colors flex items-center justify-center gap-2">
+                <a 
+                  href="tel:+18005550199"
+                  className="flex-1 bg-dark text-white py-4 rounded-xl font-bold hover:bg-accent transition-colors flex items-center justify-center gap-2"
+                >
                   <Phone className="w-4 h-4" />
                   Call Agent
-                </button>
-                <button className="flex-1 border-2 border-dark text-dark py-4 rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Inquiry
+                </a>
+                <button 
+                  onClick={handleInquiry}
+                  disabled={isInquiring || isInquirySent}
+                  className={`flex-1 border-2 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    isInquirySent 
+                      ? 'bg-emerald-500 border-emerald-500 text-white' 
+                      : 'border-dark text-dark hover:bg-dark hover:text-white'
+                  }`}
+                >
+                  {isInquiring ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : isInquirySent ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Mail className="w-4 h-4" />
+                  )}
+                  {isInquirySent ? 'Sent' : 'Inquiry'}
                 </button>
               </div>
             </div>
